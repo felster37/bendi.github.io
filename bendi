@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bendy Clicker</title>
+    <style>
+        /* Общие стили: темная тема в духе книги */
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #0a0a0a; /* Глубокий черный */
+            color: #e0e0e0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        /* Стили счетчика */
+        #counter-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        #score {
+            font-size: 4rem;
+            font-weight: bold;
+            color: #ffcc00; /* Золотистый/чернильный акцент */
+            text-shadow: 0 0 20px rgba(255, 204, 0, 0.5);
+            margin: 0;
+        }
+
+        .label {
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0.6;
+        }
+
+        /* Главная кнопка-кликер */
+        #clicker-btn {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            border: none;
+            background: radial-gradient(circle, #333, #000);
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5), 0 0 15px rgba(255, 204, 0, 0.2);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.1s active;
+            outline: none;
+            position: relative;
+        }
+
+        /* Эффект при нажатии */
+        #clicker-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Иконка внутри кнопки (можно заменить на картинку Бенди) */
+        #clicker-btn::after {
+            content: '💀'; 
+            font-size: 5rem;
+        }
+
+        /* Анимация пульсации, чтобы привлечь внимание */
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 204, 0, 0.4); }
+            70% { box-shadow: 0 0 0 20px rgba(255, 204, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 204, 0, 0); }
+        }
+
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+
+        /* Кнопка перехода (появляется после нескольких кликов или всегда) */
+        #redirect-btn {
+            margin-top: 40px;
+            padding: 15px 30px;
+            background-color: #ffcc00;
+            color: #000;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 5px;
+            opacity: 0; /* Изначально скрыта */
+            transition: opacity 0.5s ease;
+            pointer-events: none;
+        }
+
+        #redirect-btn.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* Эффект вылетающих частиц при клике */
+        .particle {
+            position: absolute;
+            color: #ffcc00;
+            font-size: 1.5rem;
+            pointer-events: none;
+            animation: flyUp 0.8s ease-out forwards;
+        }
+
+        @keyframes flyUp {
+            0% { transform: translateY(0) opacity(1); }
+100% { transform: translateY(-100px) opacity(0); } }
+
+<div id="counter-container">
+    <p class="label">Собрано чернил</p>
+    <p id="score">0</p>
+</div>
+
+<button id="clicker-btn" class="pulse-animation"></button>
+
+<!-- ЗАМЕНИ ССЫЛКУ НИЖЕ НА СВОЙ ОБЗОР -->
+<a href="https://твой-сайт.рф/obzor-knigi" id="redirect-btn">ПРОЧИТАТЬ ОБЗОР</a>
+
+<script>
+    let count = 0;
+    const scoreElement = document.getElementById('score');
+    const btn = document.getElementById('clicker-btn');
+    const redirectBtn = document.getElementById('redirect-btn');
+
+    // На сколько кликов открывать кнопку перехода
+    const CLICKS_TO_UNLOCK = 10; 
+
+    btn.addEventListener('click', (e) => {
+        count++;
+        scoreElement.innerText = count;
+
+        // Создаем эффект вылетающего числа
+        createParticle(e.clientX, e.clientY);
+
+        // Если накликали достаточно — показываем кнопку обзора
+        if (count >= CLICKS_TO_UNLOCK) {
+            redirectBtn.classList.add('visible');
+        }
+    });
+
+    function createParticle(x, y) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.innerText = '+1';
+        particle.style.left = x + 'px';
+        particle.style.top = y + 'px';
+        document.body.appendChild(particle);
+
+        setTimeout(() => {
+            particle.remove();
+        }, 800);
+    }
+</script>
